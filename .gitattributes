@@ -1,4 +1,5 @@
 *.hx linguist-language=Haxe
+*.js linguist-detectable=false
 .gitattributes export-ignore
 .gitignore     export-ignore
 .gitkeep       export-ignore
