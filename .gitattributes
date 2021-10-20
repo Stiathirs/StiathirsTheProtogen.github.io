@@ -1,1 +1,4 @@
 *.hx linguist-language=Haxe
+.gitattributes export-ignore
+.gitignore     export-ignore
+.gitkeep       export-ignore
