@@ -1,3 +1,3 @@
-# Twine Experiments
+# Twine
 
 This is where I post my Twine experiments and games.
