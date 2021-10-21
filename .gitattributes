@@ -2,7 +2,7 @@
 *.hx linguist-language=Haxe
 
 # JS showing up is annoying, since it takes, like, 80% of the project because of Haxe export, so don't show it in languages.
-*.js linguist-documentation
+HaxeFlixel/*/*.js linguist-documentation
 
 # Don't say that Haxe's exported HTML files are language uses.
 HaxeFlixel/*/index.html linguist-documentation
