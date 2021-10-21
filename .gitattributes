@@ -1,4 +1,5 @@
 *.hx linguist-language=Haxe
+# JS showing up is annoying, so don't
 *.js linguist-documentation
 .gitattributes export-ignore
 .gitignore     export-ignore
