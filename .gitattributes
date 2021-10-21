@@ -1,6 +1,7 @@
-*.hx linguist-language=Haxe
-# JS showing up is annoying, so don't
-*.js linguist-documentation
+*.hx linguist-language=Haxe    # Force Haxe files to show up instead of appearing as Other.
+*.js linguist-documentation    # JS showing up is annoying, since it takes, like, 80% of the project because of Haxe export, so don't show it in languages.
+
+# If someone exports this for some reason, don't include these.
 .gitattributes export-ignore
 .gitignore     export-ignore
 .gitkeep       export-ignore
