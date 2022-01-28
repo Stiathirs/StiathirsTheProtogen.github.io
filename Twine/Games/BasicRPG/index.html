@@ -9,7 +9,7 @@
 </head>
 <body>
 <tw-story><noscript><tw-noscript>JavaScript needs to be enabled to play Basic RPG.</tw-noscript></noscript></tw-story>
-<tw-storydata name="Basic RPG" startnode="1" creator="Twine" creator-version="2.3.16" ifid="56CBD072-CE1D-4ECF-976F-5A521FF0E990" zoom="1" format="Harlowe" format-version="3.1.0" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">tw-sidebar { display: none } tw-link, .enchantment-link {color: #0080ff}
+<tw-storydata name="Basic RPG" startnode="1" creator="Twine" creator-version="2.3.16" ifid="56CBD072-CE1D-4ECF-976F-5A521FF0E990" zoom="1" format="Harlowe" format-version="3.2.3" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">tw-sidebar { display: none } tw-link, .enchantment-link {color: #0080ff}
 tw-link:hover, .enchantment-link:hover {color: #40c0ff} .visited {color: #0080ff} .visited:hover {color: #40c0ff}</style><script role="script" id="twine-user-script" type="text/twine-javascript"></script><tw-passagedata pid="1" name="INIT" tags="" position="1105,297" size="100,100">(if: $rerolls is 0)[(set: $rerolls = 4)](set: $str = (random: 1,6)+(random: 1,6)+(random: 1,6))(set: $dex = (random: 1,6)+(random: 1,6)+(random: 1,6))(set: $con = (random: 1,6)+(random: 1,6)+(random: 1,6))(set: $maxhp = 10 + $con * 2)(set: $damagelow = 0 + (floor: $str/2))(set: $damagehigh = $damagelow + 5)(set: $hp = $maxhp, $level = 1, $nextlevel = 50, $skillpoints = 0, $gold = ((random: 1,10) + (random: 1,10)) * 10, $day = 1, $res = 0, $healthPotions = 0)(set: $blackout = (t8ndepart: &quot;dissolve&quot;) + (t8ntime: 5s))(set: $exp = 0)Rolling 3d6 for Strength: $str
 Rolling 3d6 for Dexterity: $dex
 Rolling 3d6 for Constitution: $con
@@ -37,7 +37,7 @@ Stash: $stash GP
 EXP: (live: 1ms)[(print: &#39;&lt;progress value=&quot;&#39; + (text: $exp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $nextlevel) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $exp/$nextlevel]
 Kill Streak: $killStreak
 
-(if: $start is 1)[(set: $monster_hp = (random: 25,50) + $killStreak * 2, $start = 0)]
+(set: $monster_hp = (random: 15,30) + $killStreak * 2)
 Monster Health: $monster_hp
 (set: $inventoryLocation = &quot;attack&quot;, $hasntReturnedFromInventory = 1)
 You encountered a monster!
@@ -66,7 +66,6 @@ Health: (print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min
 Health Potion(s): $healthPotions - [[Drink|drinkHealthPotion]]
 ]
 [[Return|returnToPosition]]</tw-passagedata><tw-passagedata pid="8" name="drinkHealthPotion" tags="" position="500,400" size="100,100">(set: $hp = $maxhp, $healthPotions = it - 1)(goto: &quot;Inventory&quot;)</tw-passagedata><tw-passagedata pid="9" name="returnToPosition" tags="" position="702,603" size="100,100">(goto: $inventoryLocation)</tw-passagedata><tw-passagedata pid="10" name="adventureINIT" tags="" position="800,725" size="100,100">(if: $adventureStarted is 0)[(set: $stash = 0, $adventureStarted = 1, $killStreak = 0)]
-(set: $start = 1)
 (set: $res = false)
 (goto: &quot;Adventure!&quot;)</tw-passagedata><tw-passagedata pid="11" name="attack" tags="" position="700,1000" size="100,100">(if: $hasntReturnedFromInventory is 1)[(if: (either: 0,1) is 0)[(set: $attacker = 0)](else:)[(set: $attacker = 1)]](else:)[(set: $attacker to 0)](set: $inventoryLocation = &quot;attack&quot;, $successfulLifeThrows = 0)(if: $attacker is 0)[(set: $damage = (random: 1,8 + $killStreak))(set: $hp = it - $damage)(set:$failedLifeThrows = ($hp / -1) * 2)(if: $hp &lt; 1 is true)[Health: (print: &#39;&lt;meter value=&quot;0&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $maxhp) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) 0/$maxhp HP
 EXP: (live: 1ms)[(print: &#39;&lt;progress value=&quot;&#39; + (text: $exp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $nextlevel) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $exp/$nextlevel]
