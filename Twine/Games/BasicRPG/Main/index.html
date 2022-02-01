@@ -65,7 +65,7 @@ Health: (print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min
 (if: $healthPotions &gt; 0)[
 Health Potion(s): $healthPotions - [[Drink|drinkHealthPotion]]
 ]
-[[Return|returnToPosition]]</tw-passagedata><tw-passagedata pid="8" name="drinkHealthPotion" tags="" position="500,400" size="100,100">(set: $hp = $maxhp, $healthPotions = it - 1)(goto: &quot;Inventory&quot;)</tw-passagedata><tw-passagedata pid="9" name="returnToPosition" tags="" position="500,600" size="100,100">(goto: $inventoryLocation)</tw-passagedata><tw-passagedata pid="10" name="adventureINIT" tags="" position="800,725" size="100,100">(if: $adventureStarted is 0)[(set: $stash = 0, $adventureStarted = 1, $killStreak = 0)]
+[[Return|returnToPosition]]</tw-passagedata><tw-passagedata pid="8" name="drinkHealthPotion" tags="" position="500,400" size="100,100">(set: $hp = $maxhp, $healthPotions = it - 1)(goto: &quot;Inventory&quot;)</tw-passagedata><tw-passagedata pid="9" name="returnToPosition" tags="" position="500,600" size="100,100">(goto: $inventoryLocation)</tw-passagedata><tw-passagedata pid="10" name="adventureINIT" tags="" position="800,725" size="100,100">(if: $adventureStarted is 0)[(set: $stash = 0, $adventureStarted = 1, $killStreak = 0, $reloadBlocker = false)]
 (set: $res = false)
 (set: $rolledHealth = false)
 (goto: &quot;Adventure!&quot;)</tw-passagedata><tw-passagedata pid="11" name="flee" tags="" position="900,1050" size="100,100">(set: $goldLost = (round: $stash / 4))(set: $stash = it - $goldLost)You flee back to town!
@@ -118,31 +118,31 @@ Monster HP: (cond: $monster_hp &gt; 0, $monster_hp, 0)]
 [[Inventory]]](else:)[(if: $goFirst is true)[
 You attack!(set: $yourDamage = (random: $damagelow, $damagehigh))
 You dealt 1d6(cond: $damagelow - 1 &gt; 0, &quot;+&quot; + (text:$damagelow - 1),&quot;&quot;) = $yourDamage damage!(set: $monster_hp = it - $yourDamage)
-(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (random: 1,5) * (($killStreak * 0.2) + 1))(set: $stash = it + $loot)The attack was lethal!
+(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (round:(random: 1,5) * (($killStreak * 0.2) + 1)))(set: $stash = it + $loot)The attack was lethal!
 The monster died! On its corpse, it had $loot GP. Your stash is now worth $stash GP. You gained $xpgain EXP! (if: $exp &gt;= $nextlevel)[You leveled up! You got 3 skillpoints!(set: $skillpoints = it + 3, $level = it + 1, $nextlevel = it + (round: it * 0.1), $exp = it - $nextlevel)]
 (set: $killStreak = it + 1)
 [[Continue Adventuring!|adventureINIT]]
 [[Go home|claim]]](else:)[The monster attacks back!(set: $monsterDamage = (random:1,8) + $killStreak)
-You take 1d8(cond: $killStreak &gt; 0, &quot;+&quot; + (text: $killstreak),&quot;&quot;) = $monsterDamage damage!(set: $hp = it - $monsterDamage)
+You take 1d8(cond: $killStreak &gt; 0, &quot;+&quot; + (text: $killStreak),&quot;&quot;) = $monsterDamage damage!(set: $hp = it - $monsterDamage)
 (if: $hp &lt; 0)[The attack knocks you unconcious!
 
 [[Your life is in the hands of Fate]]](else:)[
 [[Attack]]
 (link: &quot;Flee (Lose 1/4 of your stash)&quot;)[ Are you Sure? [[Yes|flee]]]
 [[Inventory]]]]](else:)[The monster attacks!(set: $monsterDamage = (random:1,8) + $killStreak)
-You take 1d8(cond: $killStreak &gt; 0, &quot;+&quot; + (text: $killstreak),&quot;&quot;) = $monsterDamage damage!(set: $hp = it - $monsterDamage)
+You take 1d8(cond: $killStreak &gt; 0, &quot;+&quot; + (text: $killStreak),&quot;&quot;) = $monsterDamage damage!(set: $hp = it - $monsterDamage)
 (if: $hp &lt; 0)[The attack knocks you unconcious!
 
 [[Your life is in the hands of Fate]]](else:)[You attack back!(set: $yourDamage = (random: $damagelow, $damagehigh))
 You dealt 1d6(cond: $damagelow - 1 &gt; 0, &quot;+&quot; + (text: $damagelow - 1),&quot;&quot;) = $yourDamage damage!(set: $monster_hp = it - $yourDamage)
-(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (random: 1,5) * (($killStreak * 0.2) + 1))(set: $stash = it + $loot)The attack was lethal!
+(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (round: (random: 1,5) * (($killStreak * 0.2) + 1)))(set: $stash = it + $loot)The attack was lethal!
 The monster died! On its corpse, it had $loot GP. Your stash is now worth $stash GP. You gained $xpgain EXP! (if: $exp &gt;= $nextlevel)[You leveled up! You got 3 skillpoints!(set: $skillpoints = it + 3, $level = it + 1, $nextlevel = it + (round: it * 0.1), $exp = it - $nextlevel)]
 (set: $killStreak = it + 1)
 [[Continue Adventuring!|adventureINIT]]
 [[Go home|claim]]](else:)[
 [[Attack]]
 (link: &quot;Flee (Lose 1/4 of your stash)&quot;)[ Are you Sure? [[Yes|flee]]]
-[[Inventory]]]]]](set: $openedInv to false)</tw-passagedata><tw-passagedata pid="19" name="Your life is in the hands of Fate" tags="" position="500,1200" size="100,100">(if: $reloadBlocker is false)(set: $reloadBlocker to true)Trying to survive...(set: $failedLifeThrows = ($hp / -1) * 2)(if: $hp &lt; 0)[Extra damage lowered your survival rate!]
+[[Inventory]]]]]](set: $openedInv to false)</tw-passagedata><tw-passagedata pid="19" name="Your life is in the hands of Fate" tags="" position="500,1200" size="100,100">(if: $reloadBlocker is false)[(set: $reloadBlocker to true)Trying to survive...(set: $failedLifeThrows = ($hp / -1) * 2)(if: $hp &lt; 0)[Extra damage lowered your survival rate!]
 (live: 25ms)[(set: $rollResult = (random: 1,20))(if: $rollResult &lt;= 10)[(set: $failedLifeThrows = it + 1)](else:)[(set: $successfulLifeThrows = it + 1 + (cond: $rollResult is 20, $stabilityBonus, 0))]Instability: (print: &#39;&lt;meter max=1000 min=0 value=&#39; + (text: $failedLifeThrows * 10) + &#39; high=1 low=1 optimum=0&gt;&#39;)
 Stability: (print: &#39;   &lt;meter max=1000 min=0 value=&#39; + (text: $successfulLifeThrows * 10) + &#39;&gt;&#39;)(if: ($failedLifeThrows &gt;= 100) or ($successfulLifeThrows &gt;= 100))[(stop:)(if: $failedLifeThrows &gt;= 100)[
 Your heart faulters, and then stops beating.
@@ -151,7 +151,9 @@ You died!
 $blackout[[//Your vision fades away...//|aDayPasses]]](else:)[(set: $hp = 1)
 You become stable, and wake up an hour later...
 (set: $day = it + 2)
-[[Crawl Home|claim]]]]]</tw-passagedata></tw-storydata>
+[[Crawl Home|claim]]]]]](else:)[You dirty cheater. You die from cheating.(set: $hp = 0)
+
+$blackout[[//Your vision fades away...//|aDayPasses]]]</tw-passagedata></tw-storydata>
 <script title="Twine engine code" data-main="harlowe">"use strict";var _slicedToArray=function(){return function(e,t){if(Array.isArray(e))return e;if(Symbol.iterator in Object(e))return function(e,t){var n=[],r=!0,a=!1,i=void 0;try{for(var o,s=e[Symbol.iterator]();!(r=(o=s.next()).done)&&(n.push(o.value),!t||n.length!==t);r=!0);}catch(e){a=!0,i=e}finally{try{!r&&s.return&&s.return()}finally{if(a)throw i}}return n}(e,t);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};function _defineProperty(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function _toConsumableArray(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}!function(){
 /**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
