@@ -118,7 +118,7 @@ Monster HP: (cond: $monster_hp &gt; 0, $monster_hp, 0)]
 [[Inventory]]](else:)[(if: $goFirst is true)[
 You attack!(set: $yourDamage = (random: $damagelow, $damagehigh))
 You dealt 1d6(cond: $damagelow - 1 &gt; 0, &quot;+&quot; + (text:$damagelow - 1),&quot;&quot;) = $yourDamage damage!(set: $monster_hp = it - $yourDamage)
-(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (random: 1,5) * (($killStreak * 0.2) + 1))The attack was lethal!
+(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (random: 1,5) * (($killStreak * 0.2) + 1))(set: $stash = it + $loot)The attack was lethal!
 The monster died! On its corpse, it had $loot GP. Your stash is now worth $stash GP. You gained $xpgain EXP! (if: $exp &gt;= $nextlevel)[You leveled up! You got 3 skillpoints!(set: $skillpoints = it + 3, $level = it + 1, $nextlevel = it + (round: it * 0.1), $exp = it - $nextlevel)]
 (set: $killStreak = it + 1)
 [[Continue Adventuring!|adventureINIT]]
@@ -135,14 +135,14 @@ You take 1d8(cond: $killStreak &gt; 0, &quot;+&quot; + (text: $killstreak),&quot
 
 [[Your life is in the hands of Fate]]](else:)[You attack back!(set: $yourDamage = (random: $damagelow, $damagehigh))
 You dealt 1d6(cond: $damagelow - 1 &gt; 0, &quot;+&quot; + (text: $damagelow - 1),&quot;&quot;) = $yourDamage damage!(set: $monster_hp = it - $yourDamage)
-(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (random: 1,5) * (($killStreak * 0.2) + 1))The attack was lethal!
+(if: $monster_hp &lt; 1)[(set: $xpgain to (round:(random: 1,5) * (($killStreak * 0.1) + 1)))(set: $exp = it + $xpgain)(set: $loot = (random: 1,5) * (($killStreak * 0.2) + 1))(set: $stash = it + $loot)The attack was lethal!
 The monster died! On its corpse, it had $loot GP. Your stash is now worth $stash GP. You gained $xpgain EXP! (if: $exp &gt;= $nextlevel)[You leveled up! You got 3 skillpoints!(set: $skillpoints = it + 3, $level = it + 1, $nextlevel = it + (round: it * 0.1), $exp = it - $nextlevel)]
 (set: $killStreak = it + 1)
 [[Continue Adventuring!|adventureINIT]]
 [[Go home|claim]]](else:)[
 [[Attack]]
 (link: &quot;Flee (Lose 1/4 of your stash)&quot;)[ Are you Sure? [[Yes|flee]]]
-[[Inventory]]]]]](set: $openedInv to false)</tw-passagedata><tw-passagedata pid="19" name="Your life is in the hands of Fate" tags="" position="500,1200" size="100,100">Trying to survive...(set: $failedLifeThrows = ($hp / -1) * 2)(if: $hp &lt; 0)[Extra damage lowered your survival rate!]
+[[Inventory]]]]]](set: $openedInv to false)</tw-passagedata><tw-passagedata pid="19" name="Your life is in the hands of Fate" tags="" position="500,1200" size="100,100">(if: $reloadBlocker is false)(set: $reloadBlocker to true)Trying to survive...(set: $failedLifeThrows = ($hp / -1) * 2)(if: $hp &lt; 0)[Extra damage lowered your survival rate!]
 (live: 25ms)[(set: $rollResult = (random: 1,20))(if: $rollResult &lt;= 10)[(set: $failedLifeThrows = it + 1)](else:)[(set: $successfulLifeThrows = it + 1 + (cond: $rollResult is 20, $stabilityBonus, 0))]Instability: (print: &#39;&lt;meter max=1000 min=0 value=&#39; + (text: $failedLifeThrows * 10) + &#39; high=1 low=1 optimum=0&gt;&#39;)
 Stability: (print: &#39;   &lt;meter max=1000 min=0 value=&#39; + (text: $successfulLifeThrows * 10) + &#39;&gt;&#39;)(if: ($failedLifeThrows &gt;= 100) or ($successfulLifeThrows &gt;= 100))[(stop:)(if: $failedLifeThrows &gt;= 100)[
 Your heart faulters, and then stops beating.
