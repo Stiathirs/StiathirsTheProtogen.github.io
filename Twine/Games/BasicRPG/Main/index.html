@@ -145,7 +145,7 @@ The monster died!(if: $vigorousTraitTier &gt; 0)[(set: _recoveredHP = (ceil: $ma
 (link: &quot;Flee (Lose 1/4 of your stash)&quot;)[ Are you Sure? [[Yes|flee]]]
 [[Inventory]]]]](else:)[The monster attacks!(set: $monsterDamage = (random:1,8) + $killStreak)
 (if: $dodgeChance &lt; (random: 1,100))[You take 1d8(cond: $killStreak &gt; 0, &quot;+&quot; + (text: $killStreak),&quot;&quot;) = $monsterDamage damage!(set: $hp = it - $monsterDamage)
-(if: $hp &lt; 0)[(if: $lastStandChance &lt; (random:1,100))[The attack knocks you unconcious!
+(if: $hp &lt; 1)[(if: $lastStandChance &lt; (random:1,100))[The attack knocks you unconcious!
 
 [[Your life is in the hands of Fate]]](else:)[(set: $hp = 1)You are staggered by the killing blow, but stand your ground!
 ]]](else:)[You dodge the attack!
