@@ -9,7 +9,7 @@
 </head>
 <body>
 <tw-story><noscript><tw-noscript>JavaScript needs to be enabled to play Basic RPG.</tw-noscript></noscript></tw-story>
-<tw-storydata name="Basic RPG" startnode="36" creator="Twine" creator-version="2.3.16" ifid="56CBD072-CE1D-4ECF-976F-5A521FF0E990" zoom="1" format="Harlowe" format-version="3.2.3" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">tw-sidebar { display: none } tw-link, .enchantment-link {color: #0080ff}
+<tw-storydata name="Basic RPG" startnode="32" creator="Twine" creator-version="2.3.16" ifid="56CBD072-CE1D-4ECF-976F-5A521FF0E990" zoom="1" format="Harlowe" format-version="3.2.3" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">tw-sidebar { display: none } tw-link, .enchantment-link {color: #0080ff}
 tw-link:hover, .enchantment-link:hover {color: #40c0ff} .visited {color: #0080ff} .visited:hover {color: #40c0ff}</style><script role="script" id="twine-user-script" type="text/twine-javascript">window.getStoragePrefix = function () {
 	return "(Saved Game " + Engine.options.ifid + ") ";
 }
@@ -22,7 +22,7 @@ Rolling 3d6 for Dexterity: $dex
 Rolling 3d6 for Constitution: $con
 
 Done!
-
+(set: $gold to 100000)
 [[To the game!!|main]]
 (if: $rerolls is not 1)[(linkrevealgoto: (text: $rerolls - 1) + &quot; Reroll&quot; + (cond: $rerolls &gt; 2, &quot;s&quot;, &quot;&quot;) + &quot; Left&quot;, &quot;ROLL&quot;)[(set: $rerolls = it - 1)]]</tw-passagedata><tw-passagedata pid="2" name="main" tags="" position="950,600" size="100,100">(if: $hp &lt; 1)[(set: $hp = 1, $res = 1)](set: $inventoryLocation = &quot;main&quot;)
 Money: $gold GP
@@ -33,12 +33,13 @@ As you check for your stash, it&#39;s gone!
 ](else:)[You were resurrected in town.
 ]]
 (if: $res is not 1)[[[Adventure!|adventureINIT]]](else:)[You are exhausted from your resurrection. Maybe you should rest?]
-[[Rest]]
 [[Shop]]
+[[Rest]]
 [[Inventory]]
 [[Skills]]
 [[Statistics]]
 [[Achievements]]
+
 (if:(save-game:&quot;A&quot;))[](else:)[(alert: &quot;Your game couldn&#39;t be saved. Are cookies blocked?&quot;,&quot;OK&quot;)]</tw-passagedata><tw-passagedata pid="3" name="Adventure!" tags="no-gui" position="700,700" size="100,100">(set: _eventRoll to (random: 1,100), $eventResult = (random: 1,100), $eventCount = it + 1)
 (if: _eventRoll &lt;= 5 and $killStreak &gt;= 5 and $justAtEvent is false)[(set: $justAtEvent = true)(goto:&quot;Shrine&quot;)](elseif: _eventRoll &lt;= 15 and $killStreak &gt;= 2 and $justAtEvent is false)[(set: $justAtEvent = true)(goto:&quot;Clearing&quot;)](else:)[(set: $eventCount = it - 1)(goto:&quot;Monster Encounter&quot;)]
 
@@ -46,37 +47,35 @@ As you check for your stash, it&#39;s gone!
 You will have (live: 1ms)[(set: $dispHP = $hp + ($sleeptime * 10))(if: $dispHP &gt; $maxhp)[(set: $dispHP = $maxhp)](if:$sleeping is 0)[$dispHP](else:)[(text: $hp)]]/$maxhp HP when you are done resting.
 
 (linkrepeat: &quot;[-10 Days]&quot;)[(set: $sleeptime = it - 10)(if: $sleeptime &lt; 1)[(set: $sleeptime = 1)]] (linkrepeat: &quot;[-1 Day]&quot;)[(set: $sleeptime = it - 1)(if: $sleeptime &lt; 1)[(set: $sleeptime = 1)]] (linkrepeat: &quot;[+1 Day]&quot;)[(set: $sleeptime = it + 1)] (linkrepeat: &quot;[+10 Days]&quot;)[(set: $sleeptime = it + 10)]
-
-[[Cancel|main]]
-$blackout[[Sleep|sleeping]]</tw-passagedata><tw-passagedata pid="5" name="Shop" tags="no-gui" position="1100,450" size="100,100">NOTE: Not fully implemented, planning to add weapons, armor, and other items here in the final game.
+(link:&quot;Rest&quot;)[(set: $hp = $hp + ($sleeptime * 10))(if: $hp &gt; $maxhp)[(set: $hp = $maxhp)](set: $res = false)(set: $day = it + $sleeptime, $daysRested = it + $sleeptime)(goto:&quot;main&quot;)]
+[[Cancel|main]]</tw-passagedata><tw-passagedata pid="5" name="Shop" tags="no-gui" position="1100,450" size="100,100">NOTE: Not fully implemented, planning to add weapons, armor, and other items here in the final game.
 
 Money: |gold&gt;[$gold] GP
 
 
-(link-repeat:&quot;Buy Health Potion - 10 GP&quot;)[(if: $gold &gt;= 10)[(set: $gold = it - 10, $healthPotions = it + 1)(replace:?gold)[$gold]]]
-(if: $currentCrystal &lt; 16)[[[Buy Trait Crystal - Stock: (text: 16 - $currentCrystal) - (text: 100 * $currentCrystal) GP|buyTraitCrystal]]](else:)[[[Buy Trait Crystal - OUT OF STOCK|Shop]]]
+(link-repeat:&quot;Buy Health Potion&quot;)[(if: $gold &gt;= 10)[(set: $gold = it - 10, $healthPotions = it + 1)(replace:?gold)[$gold]]] - 10 GP
+(link-repeat:&quot;Buy Trait Crystal&quot;)[(if: $gold &gt;= 100 * $currentCrystal and  $currentCrystal &lt; 16)[(set: $gold = it - (100 * $currentCrystal), $currentCrystal = it + 1, $traitCrystals = it + 1)(replace:?crystalstuff)[(cond:$currentCrystal is not 16,&quot;Stock: &quot;+(text: 16 - $currentCrystal)+&quot; - &quot;+(text: 100 * $currentCrystal)+&quot; GP&quot;,&quot;OUT OF STOCK&quot;)(replace:?gold)[$gold]]]] - |crystalStuff&gt;[(cond:$currentCrystal is not 16,&quot;Stock: &quot;+(text: 16 - $currentCrystal)+&quot; - &quot;+(text: 100 * $currentCrystal)+&quot; GP&quot;,&quot;OUT OF STOCK&quot;)]
 
 [[Return|main]]</tw-passagedata><tw-passagedata pid="6" name="Inventory" tags="no-gui" position="700,500" size="100,100">(set: $openedInv to true)NOTE: This is not fully developed yet, eventually, there will be a category-based system.
 
-Health: (print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $maxhp) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $hp/$maxhp HP
+Health: |health&gt;[(print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $maxhp) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $hp/$maxhp HP]
 
-(if: $healthPotions &gt; 0)[
-$healthPotions Health Potion(cond: $healthPotions &gt; 1, &quot;s&quot;, &quot;&quot;) - [[Drink|drinkHealthPotion]]](if: $traitCrystals &gt; 0)[
+
+|healthPots&gt;[(if: $healthPotions &gt; 0)[
+|healthPotCount&gt;[$healthPotions] Health Potion(cond: $healthPotions &gt; 1, &quot;s&quot;, &quot;&quot;) - (link-repeat:&quot;Drink&quot;)[(set: $hp = $maxhp, $healthPotions = it - 1)(if: $healthPotions is 0)[(hide:?healthPots)](replace:?healthPotCount)[$healthPotions](replace:?health)[(print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $maxhp) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $hp/$maxhp HP]]]](if: $traitCrystals &gt; 0)[
 $traitCrystals Trait Crystal(cond: $traitCrystals &gt; 1, &quot;s&quot;,&quot;&quot;) - Use in Skills Screen
 ]
-[[Return|returnToPosition]]</tw-passagedata><tw-passagedata pid="7" name="drinkHealthPotion" tags="no-gui" position="500,400" size="100,100">(set: $hp = $maxhp, $healthPotions = it - 1)(goto: &quot;Inventory&quot;)</tw-passagedata><tw-passagedata pid="8" name="returnToPosition" tags="no-gui" position="500,600" size="100,100">(goto: $inventoryLocation)</tw-passagedata><tw-passagedata pid="9" name="adventureINIT" tags="" position="800,700" size="100,100">(if: $adventureStarted is 0)[(set: $stash = 0, $adventureStarted = 1, $killStreak = 0, $reloadBlocker = false)]
+(linkgoto:&quot;Return&quot;, $inventoryLocation)</tw-passagedata><tw-passagedata pid="7" name="adventureINIT" tags="" position="800,700" size="100,100">(if: $adventureStarted is 0)[(set: $stash = 0, $adventureStarted = 1, $killStreak = 0, $reloadBlocker = false)]
 (set: $res = false, $rolledHealth = false, $justAtShrine = false)
-(goto: &quot;Adventure!&quot;)</tw-passagedata><tw-passagedata pid="10" name="flee" tags="no-gui" position="900,1050" size="100,100">(set: $goldLost = (round: $stash / 4))(set: $stash = it - $goldLost, $fleeCount = it + 1)You flee back to town!
+(goto: &quot;Adventure!&quot;)</tw-passagedata><tw-passagedata pid="8" name="flee" tags="no-gui" position="900,1050" size="100,100">(set: $goldLost = (round: $stash / 4))(set: $stash = it - $goldLost, $fleeCount = it + 1)You flee back to town!
 You lost $goldLost GP from your stash!
 Your stash is now worth $stash GP.
 (if: $fleeAchievement is false)[($giveFlee:)
 ]
-[[Continue|claim]]</tw-passagedata><tw-passagedata pid="11" name="claim" tags="no-gui" position="900,1200" size="100,100">(set: $gold = it + $stash, $goldTotal = it + $stash)You claim $stash GP.
+[[Continue|claim]]</tw-passagedata><tw-passagedata pid="9" name="claim" tags="no-gui" position="900,1200" size="100,100">(set: $gold = it + $stash, $goldTotal = it + $stash)You claim $stash GP.
 (if: $gold &gt; 5000 and $richAchievement is false)[($giveRich:)
 ]
-$blackout[[Return to town|aDayPasses]]</tw-passagedata><tw-passagedata pid="12" name="aDayPasses" tags="no-gui" position="700,1200" size="100,100">(live: 5s)[(stop:)(set: $day = it + 1)(if: $killStreak &gt; $highestKillStreak)[(set: $highestKillStreak = $killStreak)](goto: &quot;main&quot;)]</tw-passagedata><tw-passagedata pid="13" name="sleeping" tags="no-gui" position="1100,900" size="100,100">(set: $hp = $hp + ($sleeptime * 10))(if: $hp &gt; $maxhp)[(set: $hp = $maxhp)](set: $res = false)
-(set: $day = it + ($sleeptime - 1), $daysRested = it + $sleeptime)
-(goto: &quot;aDayPasses&quot;)</tw-passagedata><tw-passagedata pid="14" name="Skills" tags="" position="850,450" size="100,100">
+$blackout[[Return to town|aDayPasses]]</tw-passagedata><tw-passagedata pid="10" name="aDayPasses" tags="no-gui" position="700,1200" size="100,100">(live: 5s)[(stop:)(set: $day = it + 1)(if: $killStreak &gt; $highestKillStreak)[(set: $highestKillStreak = $killStreak)](goto: &quot;main&quot;)]</tw-passagedata><tw-passagedata pid="11" name="Skills" tags="" position="850,450" size="100,100">
 Money: $gold GP
 Day: $day
 
@@ -103,12 +102,12 @@ Tier |qltt&gt;[$quickLearnerTraitTier] Quick Learner - You gain |em&gt;[(text: (
 (event: when $traitCrystals is 0 and $currentCrystal is 16 and $traitsAchievement is false)[($giveTraits:)
 ](event: when $maxhp &gt;= 100 and $healthyAchievement is false)[($giveHealthy:)
 ]
-[[Return|main]]</tw-passagedata><tw-passagedata pid="15" name="encflee" tags="no-gui" position="900,900" size="100,100">(set: $goldLost = (round: $stash / 6))(set: $stash = it - $goldLost, $fleeCount = it + 1)You flee back to town!
+[[Return|main]]</tw-passagedata><tw-passagedata pid="12" name="encflee" tags="no-gui" position="900,900" size="100,100">(set: $goldLost = (round: $stash / 6))(set: $stash = it - $goldLost, $fleeCount = it + 1)You flee back to town!
 You lost $goldLost GP from your stash!
 Your stash is now worth $stash GP.
 (if: $fleeAchievement is false)[($giveFlee:)
 ]
-[[Continue|claim]]</tw-passagedata><tw-passagedata pid="16" name="Roll Initiative" tags="" position="500,900" size="100,100">(set: $yourRoll = (random: 1,20) + $initiativeBonus, $monsterRoll = (random: 1,20) + $killStreak, $inventoryLocation = &quot;Attack&quot;)
+[[Continue|claim]]</tw-passagedata><tw-passagedata pid="13" name="Roll Initiative" tags="" position="500,900" size="100,100">(set: $yourRoll = (random: 1,20) + $initiativeBonus, $monsterRoll = (random: 1,20) + $killStreak, $inventoryLocation = &quot;Attack&quot;)
 
 You roll 1d20+$initiativeBonus for initiative and get $yourRoll.
 (if: $yourRoll &gt;= $monsterRoll)[(set: $goFirst = true)You surprise the monster!
@@ -119,7 +118,7 @@ You roll 1d20+$initiativeBonus for initiative and get $yourRoll.
 
 [[Attack]]
 (link: &quot;Flee (Lose 1/4 of your stash)&quot;)[ Are you Sure? [[Yes|flee]]]
-[[Inventory]]]</tw-passagedata><tw-passagedata pid="17" name="Attack" tags="" position="500,1050" size="100,100">
+[[Inventory]]]</tw-passagedata><tw-passagedata pid="14" name="Attack" tags="" position="500,1050" size="100,100">
 
 (live: 1ms)[Monster HP: (cond: $monster_hp &gt; 0, $monster_hp, 0)]
 
@@ -186,7 +185,7 @@ The monster died!(if: $vigorousTraitTier &gt; 0)[(set: _recoveredHP = (ceil: $ma
 [[Go home|claim]]](else:)[
 [[Attack]]
 (link: &quot;Flee (Lose 1/4 of your stash)&quot;)[ Are you Sure? [[Yes|flee]]]
-[[Inventory]]]]]](set: $openedInv to false)</tw-passagedata><tw-passagedata pid="18" name="Your life is in the hands of Fate" tags="no-gui" position="500,1200" size="100,100">(if: $reloadBlocker is false)[(set: $reloadBlocker to true)Trying to survive...(set: $failedLifeThrows = ($hp / -1) * 2, $successfulLifeThrows = 0)(if: $hp &lt; 0)[Extra damage lowered your survival rate!]
+[[Inventory]]]]]](set: $openedInv to false)</tw-passagedata><tw-passagedata pid="15" name="Your life is in the hands of Fate" tags="no-gui" position="500,1200" size="100,100">(if: $reloadBlocker is false)[(set: $reloadBlocker to true)Trying to survive...(set: $failedLifeThrows = ($hp / -1) * 2, $successfulLifeThrows = 0)(if: $hp &lt; 0)[Extra damage lowered your survival rate!]
 (live: 25ms)[(set: $rollResult = (random: 1,20))(if: $rollResult &lt;= 10)[(set: $failedLifeThrows = it + 1)](else:)[(set: $successfulLifeThrows = it + 1 + (cond: $rollResult is 20, $stabilityBonus, 0))]Instability: (print: &#39;&lt;meter max=1000 min=0 value=&#39; + (text: $failedLifeThrows * 10) + &#39; high=1 low=1 optimum=0&gt;&#39;)
 Stability: (print: &#39;   &lt;meter max=1000 min=0 value=&#39; + (text: $successfulLifeThrows * 10) + &#39;&gt;&#39;)(if: ($failedLifeThrows &gt;= 100) or ($successfulLifeThrows &gt;= 100))[(stop:)(if: $failedLifeThrows &gt;= 100)[
 Your heart faulters, and then stops beating.
@@ -197,8 +196,7 @@ You become stable, and wake up an hour later...
 (set: $day = it + 2, $cheatedDeathCount = it + 1)
 [[Crawl Home|claim]]]]]](else:)[You dirty cheater. You die from cheating.(set: $hp = 0)
 
-$blackout[[//Your vision fades away...//|aDayPasses]]]</tw-passagedata><tw-passagedata pid="19" name="buyTraitCrystal" tags="no-gui" position="1300,450" size="100,100">(if: $gold &gt;= 100 * $currentCrystal)[(set: $gold = it - (100 * $currentCrystal), $currentCrystal = it + 1, $traitCrystals = it + 1)]
-(goto:&quot;Shop&quot;)</tw-passagedata><tw-passagedata pid="20" name="Shrine" tags="" position="300,600" size="100,100">(if:$seenShrineEvent is false)[(set: $seenShrineEvent = true, $eventsDiscovered = it + 1)]
+$blackout[[//Your vision fades away...//|aDayPasses]]]</tw-passagedata><tw-passagedata pid="16" name="Shrine" tags="" position="300,600" size="100,100">(if:$seenShrineEvent is false)[(set: $seenShrineEvent = true, $eventsDiscovered = it + 1)]
 
 (if: $eventsDiscovered is 2 and $touristAchievement is false)[($giveTourist:)]
 You come across a mysterious shrine, which is covered in mysterious runes. You cannot decypher what they mean. Looking around, you don&#39;t see any living creatures nearby. You could meditate here for a while, or maybe just take a rest? Maybe it would be a better idea to just leave, maybe something could go horribly wrong if you stay.
@@ -206,7 +204,7 @@ You come across a mysterious shrine, which is covered in mysterious runes. You c
 
 [[Meditate]]
 [[Rest|Rest Event]]
-[[Move on|Move on from shrine]]</tw-passagedata><tw-passagedata pid="21" name="Meditate" tags="" position="100,450" size="100,100">
+[[Move on|Move on from shrine]]</tw-passagedata><tw-passagedata pid="17" name="Meditate" tags="" position="100,450" size="100,100">
 
 
 You sit down and meditate for a while, reflecting on your travels, and the monsters you&#39;ve slain.
@@ -226,7 +224,7 @@ You sit down and meditate for a while, reflecting on your travels, and the monst
 ($giveBlessed:)]](else:)[relaxed from doing this, and it was a nice experience.]](if: $hp &gt; 0)[
 
 [[Continue Adventuring|Adventure!]]
-[[Go home|claim]]]</tw-passagedata><tw-passagedata pid="22" name="Rest Event" tags="" position="100,600" size="100,100">
+[[Go home|claim]]]</tw-passagedata><tw-passagedata pid="18" name="Rest Event" tags="" position="100,600" size="100,100">
 
 
 You sit down and take a few hours to rest, taking a minute to eat some food.
@@ -236,15 +234,15 @@ You sit down and take a few hours to rest, taking a minute to eat some food.
 After your break, you decide that you should:
 
 [[Continue Adventuring|Adventure!]]
-[[Go home|claim]]]</tw-passagedata><tw-passagedata pid="23" name="Move on from shrine" tags="" position="100,750" size="100,100">
+[[Go home|claim]]]</tw-passagedata><tw-passagedata pid="19" name="Move on from shrine" tags="" position="100,750" size="100,100">
 
 
 You decide to just leave, that the potential reward wasn&#39;t worth the risk of something terrible happening.
 
 [[Continue Adventuring|Adventure!]]
-[[Go home|claim]]</tw-passagedata><tw-passagedata pid="24" name="GUI" tags="header" position="1100,100" size="100,100">(unless: (passage:)&#39;s tags contains &quot;no-gui&quot;)[(live: 1ms)[Health: (print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $maxhp) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $hp/$maxhp HP
+[[Go home|claim]]</tw-passagedata><tw-passagedata pid="20" name="GUI" tags="header" position="1100,100" size="100,100">(unless: (passage:)&#39;s tags contains &quot;no-gui&quot;)[(live: 1ms)[Health: (print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $maxhp) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $hp/$maxhp HP
 Level: $level
-EXP: (print: &#39;&lt;progress value=&quot;&#39; + (text: $exp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $nextlevel) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $exp/$nextlevel]]</tw-passagedata><tw-passagedata pid="25" name="Monster Encounter" tags="" position="700,900" size="100,100">(set: $openedInv to false, $justAtEvent to false)
+EXP: (print: &#39;&lt;progress value=&quot;&#39; + (text: $exp) + &#39;&quot; min=&quot;0&quot; max=&quot;&#39; + (text: $nextlevel) + &#39;&quot;&gt;&lt;/meter&gt;&#39;) $exp/$nextlevel]]</tw-passagedata><tw-passagedata pid="21" name="Monster Encounter" tags="" position="700,900" size="100,100">(set: $openedInv to false, $justAtEvent to false)
 Kill Streak: $killStreak
 (if: $rolledHealth is not true)[(set: $monster_hp = (random: 15,30) + $killStreak * 2)]
 (set: $rolledHealth = true)
@@ -252,19 +250,19 @@ Monster Health: $monster_hp
 (set: $hasntReturnedFromInventory = 1)
 You encountered a monster!(set: $monstersEncountered = it + 1)
 
-[[Roll Initiative]]</tw-passagedata><tw-passagedata pid="26" name="Clearing" tags="" position="500,750" size="100,100">(if:$seenClearingEvent is false)[(set: $seenClearingEvent = true, $eventsDiscovered = it + 1)]
+[[Roll Initiative]]</tw-passagedata><tw-passagedata pid="22" name="Clearing" tags="" position="500,750" size="100,100">(if:$seenClearingEvent is false)[(set: $seenClearingEvent = true, $eventsDiscovered = it + 1)]
 
 (if: $eventsDiscovered is 2 and $touristAchievement is false)[($giveTourist:)]
 You find a nice clearing in the woods, and there doesn&#39;t seem to be anything nearby. This could make for a nice place to rest.
 
 [[Rest|Rest Event]]
-[[Move on|Move on from clearing]]</tw-passagedata><tw-passagedata pid="27" name="Move on from clearing" tags="" position="300,750" size="100,100">
+[[Move on|Move on from clearing]]</tw-passagedata><tw-passagedata pid="23" name="Move on from clearing" tags="" position="300,750" size="100,100">
 
 
 You decide not to take a rest, as you might get ambushed if you do.
 
 [[Continue Adventuring|Adventure!]]
-[[Go home|claim]]</tw-passagedata><tw-passagedata pid="28" name="ROLL" tags="no-gui" position="1000,100" size="100,100">&lt;script&gt;deleteSaveSlot(&quot;A&quot;);&lt;/script&gt;(set: $str = (random: 1,6)+(random: 1,6)+(random: 1,6), $dex = (random: 1,6)+(random: 1,6)+(random: 1,6), $con = (random: 1,6)+(random: 1,6)+(random: 1,6))(set: $maxhp = 10 + $con * 2, $damagelow = 0 + (floor: $str/2), $stabilityBonus = (floor: $con / 10))(set: $hp = $maxhp, $initiativeBonus = (floor: $dex / 3))(set: $damagehigh = $damagelow + 5)(goto:&quot;Read Stats&quot;)</tw-passagedata><tw-passagedata pid="29" name="CUSTOM MACROS" tags="startup no-gui" position="900,100" size="100,100">(set: $giveFirstBlood to (macro:[(set: $firstKillAchievement to true, $achievementCount = it + 1)(output:)[You earned the First Blood Achievement!]]))
+[[Go home|claim]]</tw-passagedata><tw-passagedata pid="24" name="ROLL" tags="no-gui" position="1000,100" size="100,100">&lt;script&gt;deleteSaveSlot(&quot;A&quot;);&lt;/script&gt;(set: $str = (random: 1,6)+(random: 1,6)+(random: 1,6), $dex = (random: 1,6)+(random: 1,6)+(random: 1,6), $con = (random: 1,6)+(random: 1,6)+(random: 1,6))(set: $maxhp = 10 + $con * 2, $damagelow = 0 + (floor: $str/2), $stabilityBonus = (floor: $con / 10))(set: $hp = $maxhp, $initiativeBonus = (floor: $dex / 3))(set: $damagehigh = $damagelow + 5)(goto:&quot;Read Stats&quot;)</tw-passagedata><tw-passagedata pid="25" name="CUSTOM MACROS" tags="startup no-gui" position="900,100" size="100,100">(set: $giveFirstBlood to (macro:[(set: $firstKillAchievement to true, $achievementCount = it + 1)(output:)[You earned the First Blood Achievement!]]))
 (set: $give5Streak to (macro:[(set: $5StreakAchievement to true, $achievementCount = it + 1)(output:)[You earned the Mega Killstreak Achievement!]]))
 (set: $give10Streak to (macro:[(set: $10StreakAchievement to true, $achievementCount = it + 1)(output:)[You earned the Ultra Killstreak Achievement!]]))
 (set: $give15Streak to (macro:[(set: $15StreakAchievement to true, $achievementCount = it + 1)(output:)[You earned the Godly Killstreak Achievement!]]))
@@ -286,7 +284,7 @@ You decide not to take a rest, as you might get ambushed if you do.
 (set: $giveHealthy to (macro:[(set: $healthyAchievement to true, $achievementCount = it + 1)(output:)[You earned the Healthy Achievement!]]))
 (set: $giveTraits to (macro:[(set: $traitsAchievement to true, $achievementCount = it + 1)(output:)[You earned the Jack of All Trades Achievement!]]))
 (set: $giveTourist to (macro:[(set: $touristAchievement to true, $achievementCount = it + 1)(output:)[You earned the Tourist Achievement!]]))
-(set: $levelScript to (macro:[(set: $skillpoints = it + 3, $level = it + 1, $nextlevel = it + (round: it * $reqInc), $exp = it - $nextlevel)(output:)[You leveled up! You got 3 skillpoints!]]))</tw-passagedata><tw-passagedata pid="30" name="INIT GENERAL VARS" tags="startup no-gui" position="800,100" size="100,100">(set: $rerolls = 4, $level = 1, $gold = 0, $nextlevel = 30, $reqInc = 0.15, $skillpoints = 0, $day = 1, $res = 0, $healthPotions = 0, $traitCrystals = 0, $currentCrystal = 1, $vigorousTraitTier = 0, $agileTraitTier = 0, $unrelentingTraitTier = 0, $looterTraitTier = 0, $quickLearnerTraitTier = 0, $killHealPercentage = 0, $dodgeChance = 0, $lastStandChance = 0, $goldMultiplier = 0, $expMultiplier = 1, $vigorousArray = (a:0,0.05,0.07,0.1), $agileArray = (a:0,3,5,10), $unrelentingArray = (a:0,1,3,5), $looterArray = (a:0,0.25,0.50,0.75), $quickLearnerArray = (a:1,1.1,1.2,1.3), $blackout = (t8ndepart: &quot;dissolve&quot;) + (t8ntime: 3s), $exp = 0)</tw-passagedata><tw-passagedata pid="31" name="Statistics" tags="" position="950,750" size="100,100">
+(set: $levelScript to (macro:[(set: $skillpoints = it + 3, $level = it + 1, $nextlevel = it + (round: it * $reqInc), $exp = it - $nextlevel)(output:)[You leveled up! You got 3 skillpoints!]]))</tw-passagedata><tw-passagedata pid="26" name="INIT GENERAL VARS" tags="startup no-gui" position="800,100" size="100,100">(set: $rerolls = 4, $level = 1, $gold = 0, $nextlevel = 30, $reqInc = 0.15, $skillpoints = 0, $day = 1, $res = 0, $healthPotions = 0, $traitCrystals = 0, $currentCrystal = 1, $vigorousTraitTier = 0, $agileTraitTier = 0, $unrelentingTraitTier = 0, $looterTraitTier = 0, $quickLearnerTraitTier = 0, $killHealPercentage = 0, $dodgeChance = 0, $lastStandChance = 0, $goldMultiplier = 0, $expMultiplier = 1, $vigorousArray = (a:0,0.05,0.07,0.1), $agileArray = (a:0,3,5,10), $unrelentingArray = (a:0,1,3,5), $looterArray = (a:0,0.25,0.50,0.75), $quickLearnerArray = (a:1,1.1,1.2,1.3), $blackout = (t8ndepart: &quot;dissolve&quot;) + (t8ntime: 3s), $exp = 0)</tw-passagedata><tw-passagedata pid="27" name="Statistics" tags="" position="950,750" size="100,100">
 
 (if: $monstersEncountered is 0 and $daysRested is 0)[You seem to have just started, as you have nothing to track yet!
 
@@ -315,7 +313,7 @@ Events Discovered: $eventsDiscovered/2
 ](if: $daysRested &gt; 0)[OTHER:
 Days Spent Resting: $daysRested
 ]
-[[Return|main]]</tw-passagedata><tw-passagedata pid="32" name="Achievements" tags="" position="1150,600" size="100,100">
+[[Return|main]]</tw-passagedata><tw-passagedata pid="28" name="Achievements" tags="" position="1150,600" size="100,100">
 
 Obtained Achievements $achievementCount/$achievementTotal:
 (if: $level2Achievement is true)[Beginning of Your Journey: Level up for the first time.
@@ -365,11 +363,11 @@ Obtained Achievements $achievementCount/$achievementTotal:
 ](if: $richAchievement is false)[Rich: That&#39;s a lot of money you&#39;ve got there.
 ](if: $touristAchievement is false)[Tourist: There&#39;s a lot out there to find.
 ]]
-[[Back|main]]</tw-passagedata><tw-passagedata pid="33" name="INIT STAT VARS" tags="startup no-gui" position="800,200" size="100,100">(set: $killCount = 0, $expTotal = 0, $goldTotal = 0, $eventCount = 0, $koCount = 0, $deathCount = 0, $dodgeCount = 0, $cheatedDeathCount = 0, $highestKillStreak = 0, $seenShrineEvent = false, $seenClearingEvent = false, $eventsDiscovered = 0, $damageDealt = 0, $damageTaken = 0, $survivedDeathBlowCount = 0, $monstersEncountered = 0, $daysRested = 0, $fleeCount = 0)</tw-passagedata><tw-passagedata pid="34" name="INIT ACHIEVEMENT VARS" tags="startup no-gui" position="800,300" size="100,100">(set: $firstKillAchievement to false, $5StreakAchievement to false, $10StreakAchievement to false, $15StreakAchievement to false, $20StreakAchievement to false, $fleeAchievement to false, $dodgeAchievement to false, $unkillableAchievement to false, $cursedAchievement to false, $blessedAchievement to false, $richAchievement to false, $level2Achievement to false, $level5Achievement to false, $level10Achievement to false, $level25Achievement to false, $level50Achievement to false, $level75Achievement to false, $level100Achievement to false, $overkillAchievement to false, $healthyAchievement to false, $traitsAchievement to false, $touristAchievement to false, $achievementCount = 0 , $achievementTotal = 22)</tw-passagedata><tw-passagedata pid="35" name="TITLE" tags="no-gui" position="600,0" size="100,100">&lt;h1&gt;Basic RPG&lt;/h1&gt;
+[[Back|main]]</tw-passagedata><tw-passagedata pid="29" name="INIT STAT VARS" tags="startup no-gui" position="800,200" size="100,100">(set: $killCount = 0, $expTotal = 0, $goldTotal = 0, $eventCount = 0, $koCount = 0, $deathCount = 0, $dodgeCount = 0, $cheatedDeathCount = 0, $highestKillStreak = 0, $seenShrineEvent = false, $seenClearingEvent = false, $eventsDiscovered = 0, $damageDealt = 0, $damageTaken = 0, $survivedDeathBlowCount = 0, $monstersEncountered = 0, $daysRested = 0, $fleeCount = 0)</tw-passagedata><tw-passagedata pid="30" name="INIT ACHIEVEMENT VARS" tags="startup no-gui" position="800,300" size="100,100">(set: $firstKillAchievement to false, $5StreakAchievement to false, $10StreakAchievement to false, $15StreakAchievement to false, $20StreakAchievement to false, $fleeAchievement to false, $dodgeAchievement to false, $unkillableAchievement to false, $cursedAchievement to false, $blessedAchievement to false, $richAchievement to false, $level2Achievement to false, $level5Achievement to false, $level10Achievement to false, $level25Achievement to false, $level50Achievement to false, $level75Achievement to false, $level100Achievement to false, $overkillAchievement to false, $healthyAchievement to false, $traitsAchievement to false, $touristAchievement to false, $achievementCount = 0 , $achievementTotal = 22)</tw-passagedata><tw-passagedata pid="31" name="TITLE" tags="no-gui" position="600,0" size="100,100">&lt;h1&gt;Basic RPG&lt;/h1&gt;
 (if: (saved-games:) contains &quot;A&quot;)[
 (link:&quot;New Game&quot;)[Are you sure you want to start a new game? All of your current progress will be lost! [[Yes|ROLL]]]
 (link:&quot;Load Game&quot;)[(load-game:&quot;A&quot;)]](else:)[
-[[New Game|ROLL]]]</tw-passagedata><tw-passagedata pid="36" name="ALLOW INIT" tags="no-gui" position="400,0" size="100,100">(goto:&quot;TITLE&quot;)</tw-passagedata></tw-storydata>
+[[New Game|ROLL]]]</tw-passagedata><tw-passagedata pid="32" name="ALLOW INITS TO HAPPEN FIRST" tags="no-gui" position="400,0" size="100,100">(goto:&quot;TITLE&quot;)</tw-passagedata></tw-storydata>
 <script title="Twine engine code" data-main="harlowe">"use strict";var _slicedToArray=function(){return function(e,t){if(Array.isArray(e))return e;if(Symbol.iterator in Object(e))return function(e,t){var n=[],r=!0,a=!1,i=void 0;try{for(var o,s=e[Symbol.iterator]();!(r=(o=s.next()).done)&&(n.push(o.value),!t||n.length!==t);r=!0);}catch(e){a=!0,i=e}finally{try{!r&&s.return&&s.return()}finally{if(a)throw i}}return n}(e,t);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),_typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e};function _defineProperty(e,t,n){return t in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}function _toConsumableArray(e){if(Array.isArray(e)){for(var t=0,n=Array(e.length);t<e.length;t++)n[t]=e[t];return n}return Array.from(e)}!function(){
 /**
  * @license almond 0.3.3 Copyright jQuery Foundation and other contributors.
