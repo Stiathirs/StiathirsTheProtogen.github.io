@@ -63,7 +63,7 @@ Health: (print: &#39;&lt;meter value=&quot;&#39; + (text: $hp) + &#39;&quot; min
 
 (if: $healthPotions &gt; 0)[
 $healthPotions Health Potion(cond: $healthPotions &gt; 1, &quot;s&quot;, &quot;&quot;) - [[Drink|drinkHealthPotion]]](if: $traitCrystals &gt; 0)[
-$traitCrystals Trait Crystal(cond: $traitCrystals &gt; 1, &quot;s&quot;,&quot;&quot;) - Use in Stats Screen
+$traitCrystals Trait Crystal(cond: $traitCrystals &gt; 1, &quot;s&quot;,&quot;&quot;) - Use in Skills Screen
 ]
 [[Return|returnToPosition]]</tw-passagedata><tw-passagedata pid="8" name="drinkHealthPotion" tags="no-gui" position="500,400" size="100,100">(set: $hp = $maxhp, $healthPotions = it - 1)(goto: &quot;Inventory&quot;)</tw-passagedata><tw-passagedata pid="9" name="returnToPosition" tags="no-gui" position="500,600" size="100,100">(goto: $inventoryLocation)</tw-passagedata><tw-passagedata pid="10" name="adventureINIT" tags="" position="800,700" size="100,100">(if: $adventureStarted is 0)[(set: $stash = 0, $adventureStarted = 1, $killStreak = 0, $reloadBlocker = false)]
 (set: $res = false, $rolledHealth = false, $justAtShrine = false)
