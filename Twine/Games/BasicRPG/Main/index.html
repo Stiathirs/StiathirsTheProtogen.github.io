@@ -234,7 +234,7 @@ You sit down and meditate for a while, reflecting on your travels, and the monst
 You sit down and take a few hours to rest, taking a minute to eat some food.
 (if: $eventResult &lt; 20)[Suddenly, you see a beast come out from behind a tree, and you have to either fight or flee!
 
-[[Get ready to fight!|Monster Encounter]]](else:)[(if: $hp &lt; $maxhp)[(set: $hp = it + ($maxhp / 10))(if: $hp &gt; $maxhp)[(set: $hp = $maxhp)]After a nice long break from your adventure, you stand up and extinguish your campfire.](else:)[You&#39;re glad you decided to take a break, and you feel much more confident.]
+[[Get ready to fight!|Monster Encounter]]](else:)[(if: $hp &lt; $maxhp)[(set: $hp = it + (round:($maxhp / 10)))(if: $hp &gt; $maxhp)[(set: $hp = $maxhp)]After a nice long break from your adventure, you stand up and extinguish your campfire.](else:)[You&#39;re glad you decided to take a break, and you feel much more confident.]
 After your break, you decide that you should:
 
 [[Continue Adventuring|Adventure!]]
