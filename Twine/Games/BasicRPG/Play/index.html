@@ -24,7 +24,7 @@ Rolling 3d6 for Constitution: (text: $player&#39;s constitution)
 Done!
 
 [[Next|Name]]
-(if: $rerolls is not 1)[(linkrevealgoto: (text: $rerolls - 1) + &quot; Reroll&quot; + (cond: $rerolls &gt; 2, &quot;s&quot;, &quot;&quot;) + &quot; Left&quot;, &quot;ROLL&quot;)[(set: $rerolls = it - 1)]]</tw-passagedata><tw-passagedata pid="2" name="main" tags="" position="950,600" size="100,100">(if: $player is not a datamap)[(dialog: &quot;Uh oh, seems as though your stat system is of the old number var system! Your data will have to be reset! Sorry about that!&quot;, &quot;Delete and Return&quot;)&lt;script&gt;deleteSaveSlot(&quot;A&quot;);&lt;/script&gt;(goto:&quot;TITLE&quot;)](else:)[(if:	$versionNum &lt; 1)[(goto:&quot;UPDATE&quot;))](if: $player&#39;s health &lt; 1)[(set:$player&#39;s health to 1, $res to 1)](set:$inventoryLocation to &quot;main&quot;)
+(if: $rerolls is not 1)[(linkrevealgoto: (text: $rerolls - 1) + &quot; Reroll&quot; + (cond: $rerolls &gt; 2, &quot;s&quot;, &quot;&quot;) + &quot; Left&quot;, &quot;ROLL&quot;)[(set: $rerolls = it - 1)]]</tw-passagedata><tw-passagedata pid="2" name="main" tags="" position="950,600" size="100,100">(if: $player is not a datamap)[(dialog: &quot;Uh oh, seems as though your stat system is of the old number var system! Your data will have to be reset! Sorry about that!&quot;, &quot;Delete and Return&quot;)&lt;script&gt;deleteSaveSlot(&quot;A&quot;);&lt;/script&gt;(goto:&quot;TITLE&quot;)](else:)[(if:	$updateNum &lt; 1)[(goto:&quot;UPDATE&quot;)](if: $player&#39;s health &lt; 1)[(set:$player&#39;s health to 1, $res to 1)](set:$inventoryLocation to &quot;main&quot;)
 Money: (text: $player&#39;s gold) GP
 Day: $day
 
