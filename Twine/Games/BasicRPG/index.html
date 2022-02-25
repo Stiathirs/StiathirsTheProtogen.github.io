@@ -36,6 +36,15 @@
     <hr>
     <h2>Changelog</h2>
     <br>
+    <h3>The ($clamp:) Macro Update</h3>
+    <h4>Basically I made a clamping macro so uh yeah not as useful to you as it is to me sorry :P</h4>
+    <ul>
+      <li>Created a <b>($clamp:)</b> macro</li>
+      <ul>
+        <li>Replaced all <b>(set: $value to expression)(if:$value > otherexpression)[(set:$value to otherexpression)]</b> with <b>(set: $value to ($clamp: expression,1,otherexpression))</b></li>
+      </ul>
+    </ul>
+    <br>
     <h3>Updater Hotfix: Fixed the infinite updating loop</h3>
     <h4>Because the variable is updateNum not versionNum</h4>
     <br>
